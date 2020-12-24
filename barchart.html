@@ -15,29 +15,206 @@
   <body>
     <script src="js/main.js"></script>
 
-    <p>Please enter the specifications for your bar graph: </p>
-    <input type="radio" id="nonstack" name="type" value ="nonstack">
-    <label for="nonstack">graph without stacking</label>
-    <input type="radio" id="uniStack" name="type" value ="uniStack">
-    <label for="uniStack">graph with universal stacking for every bar</label>
-    <input type="radio" id="arbStack" name="type" value ="arbStack">
-    <label for="arbStack">graph with arbitrary stacking</label>
+    <!--STACK GRAPH SETTINGS-->
+    <div>
+      <p>Please enter the specifications for your bar graph: </p>
+      <input type="radio" id="nonstack" name="type" value ="nonstack">
+      <label for="nonstack">graph without stacking</label>
+      <input type="radio" id="uniStack" name="type" value ="uniStack">
+      <label for="uniStack">graph with universal stacking for every bar</label>
+      <input type="radio" id="arbStack" name="type" value ="arbStack">
+      <label for="arbStack">graph with arbitrary stacking</label>
+    </div>
 
-    <p>Enter your data:</p>
-    <p>Please eneter a series of numerical values separated by commas (,)</p>
-    <p>Please enter a series of numerical values separated by commas (,), and each group of values separated by semicolon (;):<br> i.e. 1,2,3;4,5,6;7,8 -> first bar will display (1,2,3), the second (4,5,6) and the third (7,8) </p>
-    <input type="text" id="data" name="data">
-    <label for="data">Enter numerical data</label>
+    <!--OVERALL FONT SETTINGS-->
+    <div>
+      <p>Overall font settings: </p>
+      <input type="checkbox" id="fontSync" name="fontSync" value="fontSync">
+      <label for="fontSync">synchronize font and color?</label>
 
-    <p>Enter your data labels:</p>
-    <p>Please eneter a series of data labels separated by commas (,)</p>
-    <p>Please enter a series of ndata labels separated by commas (,), and each group of values separated by semicolon (;)</p>
-    <p>warning: do not include sepecial characters in the labels: [ \ ^ $ . | ? * + ( )</p>
-    <input type="text" id="dataLabel" name="dataLabel">
-    <label for="dataLabel">Enter data labels</label>
+      <label for="docFont">Select font for all text elements of your graph: </label>
+      <select name="docFont" id="docFont">
+        <option value="arial">Arial</option>
+        <option value="verdana">Verdana</option>
+        <option value="helvetica">Helvetica</option>
+        <option value="tahoma">Tahoma</option>
+        <option value="trebuchetms">Trebuchet MS</option>
+        <option value="timesnewroman">Times New Roman</option>
+        <option value="georgia">Georgia</option>
+        <option value="garamond">Garamond</option>
+        <option value="couriernew">Courier New</option>
+        <option value="brushscriptmt">Brush Script MT</option>
+      </select>
+
+      <label for="fontColor">Select font color:</label>
+      <input type="color" id="fontColor" name="fontColor" value="#ff0000">
+    </div>
+
+    <!--TITLE SETTINGS-->
+    <div>
+      <label for="title">Enter your graph's title: </label>
+      <input type="text" id="title" name="title">
+      <label for="titlecolor">Select title font color:</label>
+      <input type="color" id="titlecolor" name="titlecolor" value="#ff0000">
+      <label for="titlesize">title font size (between 1 and 500):</label>
+      <input type="number" id="titlesize" name="titlesize" min="1" max="500">
+
+      <label for="titleFont">Select font for graph title: </label>
+      <select name="titleFont" id="titleFont">
+        <option value="arial">Arial</option>
+        <option value="verdana">Verdana</option>
+        <option value="helvetica">Helvetica</option>
+        <option value="tahoma">Tahoma</option>
+        <option value="trebuchetms">Trebuchet MS</option>
+        <option value="timesnewroman">Times New Roman</option>
+        <option value="georgia">Georgia</option>
+        <option value="garamond">Garamond</option>
+        <option value="couriernew">Courier New</option>
+        <option value="brushscriptmt">Brush Script MT</option>
+      </select>
+    </div>
+
+    <!--ENTER DATA-->
+    <div>
+      <label for="data">Enter numerical data* :</label>
+      <input type="text" id="data" name="data">
+      <p>* Please eneter a series of numerical values separated by commas (,)</p>
+      <p>* Please enter a series of numerical values separated by commas (,), and each group of values separated by semicolon (;):<br> i.e. 1,2,3;4,5,6;7,8 -> first bar will display (1,2,3), the second (4,5,6) and the third (7,8) </p>
+    </div>
 
 
+    <!--ENTER LABEL-->
+    <!-- labels will also depend on first selection: if we're doing stacks we need bar label and stack label-->
+    <div>
+      <label for="dataLabel">Enter data labels* :</label>
+      <input type="text" id="dataLabel" name="dataLabel">
+      <p>* Please eneter a series of data labels separated by commas (,)</p>
+      <p>* Please enter a series of ndata labels separated by commas (,), and each group of values separated by semicolon (;)</p>
+      <p>* warning: do not include sepecial characters in the labels: [ \ ^ $ . | ? * + ( )</p>
+    </div>
 
+    <div>
+      <p>Graph size congiuration: </p>
+      <label for="width">Graph width (between 1 and 500):</label>
+      <input type="number" id="width" name="width" min="1" max="500">
+      <label for="height">Graph height (between 1 and 500):</label>
+      <input type="number" id="height" name="height" min="1" max="500">
+    </div>
+
+    <!--BAR COLORS-->
+    <div>
+      <p>Graph bar color configuration: </p> <!-- THIS WHOLE THING WILL DEPEND ON FIRST SELECTION.. move to Jquery after.-->
+      <label for="label1">Select the color for label1:</label>
+      <input type="color" id="label1" name="label1" value="#ff0000"><br>
+      <label for="label2">Select the color for label2:</label>
+      <input type="color" id="label2" name="label2" value="#ff0000"><br>
+      <label for="bar3">Select the color for label3:</label>
+      <input type="color" id="label3" name="label3" value="#ff0000"><br>
+      <label for="bar4">Select the color for label4:</label>
+      <input type="color" id="label4" name="label4" value="#ff0000"><br>
+      <label for="bar5">Select the color for label5:</label>
+      <input type="color" id="label5" name="label5" value="#ff0000"><br>
+      <label for="bar6">Select the color for label6:</label>
+      <input type="color" id="label6" name="label6" value="#ff0000"><br>
+    </div>
+
+    <!--AXES SETTINGS-->
+    <div>
+      <span>
+        <p>axes settings: </p>
+        <input type="checkbox" id="showx" name="showx" value="showx">
+        <label for="showx">show x-axis labels?</label>
+        <label for="xsize">label font size (between 1 and 500):</label>
+        <input type="number" id="xsize" name="xsize" min="1" max="500">
+        <label for="xcolor">Select x-axis label color</label>
+        <input type="color" id="xcolor" name="xcolor" value="#ff0000">
+
+        <label for="xfont">Select font for x label: </label>
+        <select name="xfont" id="xfont">
+          <option value="arial">Arial</option>
+          <option value="verdana">Verdana</option>
+          <option value="helvetica">Helvetica</option>
+          <option value="tahoma">Tahoma</option>
+          <option value="trebuchetms">Trebuchet MS</option>
+          <option value="timesnewroman">Times New Roman</option>
+          <option value="georgia">Georgia</option>
+          <option value="garamond">Garamond</option>
+          <option value="couriernew">Courier New</option>
+          <option value="brushscriptmt">Brush Script MT</option>
+        </select>
+      </div>
+
+      </span>
+
+      <span>
+        <input type="checkbox" id="showy" name="showy" value="showy">
+        <label for="showy">show y-axis labels?</label>
+        <label for="ysize">label font size (between 1 and 500):</label>
+        <input type="number" id="ysize" name="ysize" min="1" max="500">
+        <label for="ycolor">Select y-axis label color:</label>
+        <input type="color" id="ycolor" name="ycolor" value="#ff0000">
+
+        <label for="yfont">Select font for y label: </label>
+        <select name="yfont" id="yfont">
+          <option value="arial">Arial</option>
+          <option value="verdana">Verdana</option>
+          <option value="helvetica">Helvetica</option>
+          <option value="tahoma">Tahoma</option>
+          <option value="trebuchetms">Trebuchet MS</option>
+          <option value="timesnewroman">Times New Roman</option>
+          <option value="georgia">Georgia</option>
+          <option value="garamond">Garamond</option>
+          <option value="couriernew">Courier New</option>
+          <option value="brushscriptmt">Brush Script MT</option>
+        </select>
+      </div>
+      </span>
+    </div>
+
+    <!--LEGEND SETTINGS-->
+    <div>
+      <p>Legend Settings: </p>
+      <input type="checkbox" id="showleg" name="showleg" value="showleg">
+      <label for="showleg">show legened?</label>
+      <label for="legWidth">legend width (between 1 and 500):</label>
+      <input type="number" id="legWidth" name="legWidth" min="1" max="500">
+      <label for="legHeight">legend height (between 1 and 500):</label>
+      <input type="number" id="legHeight" name="legHeight" min="1" max="500">
+      <label for="legcolor">Select legend font color:</label>
+      <input type="color" id="legcolor" name="legcolor" value="#ff0000">
+
+      <label for="legendFont">Select font for legend: </label>
+      <select name="legendFont" id="legendFont">
+        <option value="arial">Arial</option>
+        <option value="verdana">Verdana</option>
+        <option value="helvetica">Helvetica</option>
+        <option value="tahoma">Tahoma</option>
+        <option value="trebuchetms">Trebuchet MS</option>
+        <option value="timesnewroman">Times New Roman</option>
+        <option value="georgia">Georgia</option>
+        <option value="garamond">Garamond</option>
+        <option value="couriernew">Courier New</option>
+        <option value="brushscriptmt">Brush Script MT</option>
+      </select>
+
+      <label for="legendLoc">Select location for legend: </label>
+      <select name="legendLoc" id="legendLoc">
+        <option value="topL">Top Left</option>
+        <option value="topR">Top Right</option>
+        <option value="topC">Top Center</option>
+        <option value="botL">Bottom Left</option>
+        <option value="botR">Bottom Right</option>
+        <option value="botC">Bottom Center</option>
+        <option value="upL">Upper Left</option>
+        <option value="loL">Lower Left</option>
+        <option value="centL">Center Left</option>
+        <option value="upR">Upper Right</option>
+        <option value="loR">Lower Right</option>
+        <option value="centR">Center Right</option>
+      </select>
+    </div>
+
+    </div>
     <!-- div element below for displaying graph-->
     <div>
 
