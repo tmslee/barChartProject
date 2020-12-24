@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8">
+
+    <title>Bar Chart Project</title>
+    <meta name="description" content="Bar Char Project">
+    <meta name="author" content="Sang Hyup Lee">
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <link rel="stylesheet" href="css/main.css">
+
+  </head>
+  <body>
+    <script src="js/main.js"></script>
+
+    <p>Please enter the specifications for your bar graph: </p>
+    <input type="radio" id="nonstack" name="type" value ="nonstack">
+    <label for="nonstack">graph without stacking</label>
+    <input type="radio" id="uniStack" name="type" value ="uniStack">
+    <label for="uniStack">graph with universal stacking for every bar</label>
+    <input type="radio" id="arbStack" name="type" value ="arbStack">
+    <label for="arbStack">graph with arbitrary stacking</label>
+
+    <p>Enter your data:</p>
+    <p>Please eneter a series of numerical values separated by commas (,)</p>
+    <p>Please enter a series of numerical values separated by commas (,), and each group of values separated by semicolon (;):<br> i.e. 1,2,3;4,5,6;7,8 -> first bar will display (1,2,3), the second (4,5,6) and the third (7,8) </p>
+    <input type="text" id="data" name="data">
+    <label for="data">Enter numerical data</label>
+
+    <p>Enter your data labels:</p>
+    <p>Please eneter a series of data labels separated by commas (,)</p>
+    <p>Please enter a series of ndata labels separated by commas (,), and each group of values separated by semicolon (;)</p>
+    <p>warning: do not include sepecial characters in the labels: [ \ ^ $ . | ? * + ( )</p>
+    <input type="text" id="dataLabel" name="dataLabel">
+    <label for="dataLabel">Enter data labels</label>
+
+
+
+    <!-- div element below for displaying graph-->
+    <div>
+
+    </div>
+  </body>
+</html>
