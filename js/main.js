@@ -100,7 +100,8 @@ $(document).ready(()=>{
     }
   };
 
-  $('input[type=radio][name=type]').change(()=>{
+  //TYPE STTINGS
+  $('input[type=radio][name=type]').on('change', ()=>{
     let value = $('input[name=type]:checked').val();
     switch(value){
       case "nonstack":
@@ -115,7 +116,8 @@ $(document).ready(()=>{
     }
   });
 
-  $('input[type=checkbox][name=fontSync]').change(()=>{
+  //GLOBAL FONT SETTINGS
+  $('input[type=checkbox][name=fontSync]').on('change', ()=>{
     let boxChecked = $('input[type=checkbox][name=fontSync]').is(":checked");
     if(boxChecked){
       options.font.sync = true;
@@ -166,14 +168,46 @@ $(document).ready(()=>{
       $('#legendFont').prop('disabled', false);
       $('#legcolor').prop('disabled', false);
     }
-
-    console.log(options.title);
-    console.log(options.axis);
-    console.log(options.legend);
-    console.log("\n");
+  });
+  $('#docFont').on('change', ()=>{
+    let globalFont = $("#docFont").children("option:selected").val();
+    options.title.font = globalFont;
+    options.axis.xfont = globalFont;
+    options.axis.yfont = globalFont;
+    options.legend.font = globalFont;
+  });
+  $('#fontColor').on('change', ()=>{
+    let globalColor = $("#fontColor").val();
+    options.title.color = globalColor;
+    options.axis.xcolor = globalColor;
+    options.axis.ycolor = globalColor;
+    options.legend.color = globalColor;
   });
 
+  //TITLE SETTINGS
+  $('#updateTitle').on('click',()=>{
+    let title = $('#title').val();
+    if(checkSpecialChar(title)) alert("Please enter a title without special characters");
+    else{
+      options.title.text = title;
+    }
+  });
 
+  //DATA SETTINGS
 
+  //LABEL SETTINGS
 
+  //SIZE SETTINGS
+
+  //BAR COLOR SETTINGS
+
+  //AXES SETTINGS
+
+  //LEGEND SETTINGS
+
+  //HELPER FUNCTIONS  [ \ ^ $ . | ? * + ( )
+
+  const checkSpecialChar = text =>{
+    return (text.includes('[') || text.includes('\\') || text.includes('$') || text.includes('.') || text.includes('|') || text.includes('?') || text.includes('*') || text.includes('+') || text.includes('(') || text.includes(')'));
+  };
 });
