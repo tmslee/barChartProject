@@ -37,5 +37,143 @@ $(document).ready(()=>{
           - only display 1 color select option
         - no
           -display whatever settings set above
+
+
+    DYNAMIC COMPONENTS:
+      - instructional p in enter data and label
+      - bar color select setting
+      - font and font color select in title, axes, legend
     */
+  let data;
+  let options = {
+    type: 0,
+
+    label:{
+      barLabel:[],
+      stackLabel:[]
+    },
+
+    dim:{
+      width: 500,
+      height: 500
+    },
+
+    font:{
+      sync:false,
+      type:'Arial',
+      color:'#000000'
+    },
+
+    bColor:{
+      sync:true,
+      colors:'#000000'
+    },
+
+    title:{
+      text:'Graph Title',
+      size:50,
+      font:'Arial',
+      color:'#000000'
+    },
+
+    axis:{
+      xshow:true,
+      xcolor:'#000000',
+      xfont:'Arial',
+      xsize:10,
+      xangle:0,
+
+      yshow:true,
+      ycolor:'#000000',
+      yfont:'Arial',
+      ysize:10,
+      yangle: 0
+    },
+
+    legend:{
+      loc: 'upL',
+      show:true,
+      height:40,
+      width:40,
+      font: 'Arial',
+      color: '#000000'
+    }
+  };
+
+  $('input[type=radio][name=type]').change(()=>{
+    let value = $('input[name=type]:checked').val();
+    switch(value){
+      case "nonstack":
+        options.type = 0;
+        break;
+      case "uniStack":
+        options.type = 1;
+        break;
+      case "arbStack":
+        options.type = 2;
+        break;
+    }
+  });
+
+  $('input[type=checkbox][name=fontSync]').change(()=>{
+    let boxChecked = $('input[type=checkbox][name=fontSync]').is(":checked");
+    if(boxChecked){
+      options.font.sync = true;
+      let globalFont = $("#docFont").children("option:selected").val();
+      let globalColor = $("#fontColor").val();
+      options.title.font = globalFont;
+      options.title.color = globalColor;
+      options.axis.xfont = globalFont;
+      options.axis.xcolor = globalColor;
+      options.axis.yfont = globalFont;
+      options.axis.ycolor = globalColor;
+      options.legend.font = globalFont;
+      options.legend.color = globalColor;
+
+      $('#docFont').prop('disabled', false);
+      $('#fontColor').prop('disabled', false);
+
+      $('#titleFont').prop('disabled', true);
+      $('#titlecolor').prop('disabled', true);
+      $('#xfont').prop('disabled', true);
+      $('#xcolor').prop('disabled', true);
+      $('#yfont').prop('disabled', true);
+      $('#ycolor').prop('disabled', true);
+      $('#legendFont').prop('disabled', true);
+      $('#legcolor').prop('disabled', true);
+    }
+    else{
+      options.font.sync = false;
+
+      options.title.font = $("#titleFont").children("option:selected").val();
+      options.title.color = $("#titlecolor").val();
+      options.axis.xfont = $("#xfont").children("option:selected").val();
+      options.axis.xcolor = $("#xcolor").val();
+      options.axis.yfont = $("#yfont").children("option:selected").val();
+      options.axis.ycolor = $("#ycolor").val()
+      options.legend.font = $("#legendFont").children("option:selected").val();
+      options.legend.color = $("#legcolor").val()
+
+      $('#docFont').prop('disabled', true);
+      $('#fontColor').prop('disabled', true);
+
+      $('#titleFont').prop('disabled', false);
+      $('#titlecolor').prop('disabled', false);
+      $('#xfont').prop('disabled', false);
+      $('#xcolor').prop('disabled', false);
+      $('#yfont').prop('disabled', false);
+      $('#ycolor').prop('disabled', false);
+      $('#legendFont').prop('disabled', false);
+      $('#legcolor').prop('disabled', false);
+    }
+
+    console.log(options.title);
+    console.log(options.axis);
+    console.log(options.legend);
+    console.log("\n");
+  });
+
+
+
+
 });
