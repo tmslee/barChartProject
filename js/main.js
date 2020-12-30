@@ -187,7 +187,7 @@ $(document).ready(()=>{
   //TITLE SETTINGS
   $('#updateTitle').on('click',()=>{
     let title = $('#title').val();
-    if(checkSpecialChar(title)) alert("Please enter a title without special characters");
+    if(checkSpecialChar(title)) alert("Please enter a title without special characters: [ \\ ^ $ . | ? * + ( )");
     else{
       options.title.text = title;
     }
@@ -205,9 +205,9 @@ $(document).ready(()=>{
 
   //LEGEND SETTINGS
 
-  //HELPER FUNCTIONS  [ \ ^ $ . | ? * + ( )
+  //HELPER FUNCTIONS
 
   const checkSpecialChar = text =>{
-    return (text.includes('[') || text.includes('\\') || text.includes('$') || text.includes('.') || text.includes('|') || text.includes('?') || text.includes('*') || text.includes('+') || text.includes('(') || text.includes(')'));
+    return (text.includes('[') || text.includes('\\') || text.includes('$') || text.includes('.') || text.includes('|') || text.includes('?') || text.includes('*') || text.includes('+') || text.includes('(') || text.includes(')') || text.includes('^'));
   };
 });
