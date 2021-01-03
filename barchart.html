@@ -32,7 +32,7 @@
       <label for="fontSync">synchronize font and color?</label>
 
       <label for="docFont">Select font for all text elements of your graph: </label>
-      <select name="docFont" id="docFont">
+      <select name="docFont" id="docFont" disabled>
         <option value="arial">Arial</option>
         <option value="verdana">Verdana</option>
         <option value="helvetica">Helvetica</option>
@@ -46,7 +46,7 @@
       </select>
 
       <label for="fontColor">Select font color:</label>
-      <input type="color" id="fontColor" name="fontColor" value="#ff0000">
+      <input type="color" id="fontColor" name="fontColor" value="#ff0000" disabled>
     </div>
 
     <!--TITLE SETTINGS-->
@@ -93,6 +93,7 @@
       <p>* warning: do not include sepecial characters in the labels: [ \ ^ $ . | ? * + ( )</p>
     </div>
 
+    <!--GRAPH SIZE-->
     <div>
       <p>Graph size congiuration: </p>
       <label for="width">Graph width (between 1 and 500):</label>
@@ -102,32 +103,27 @@
     </div>
 
     <!--BAR COLORS-->
-    <div>
-      <p>Graph bar color configuration: </p> <!-- THIS WHOLE THING WILL DEPEND ON FIRST SELECTION.. move to Jquery after.-->
-      <label for="label1">Select the color for label1:</label>
-      <input type="color" id="label1" name="label1" value="#ff0000"><br>
-      <label for="label2">Select the color for label2:</label>
-      <input type="color" id="label2" name="label2" value="#ff0000"><br>
-      <label for="bar3">Select the color for label3:</label>
-      <input type="color" id="label3" name="label3" value="#ff0000"><br>
-      <label for="bar4">Select the color for label4:</label>
-      <input type="color" id="label4" name="label4" value="#ff0000"><br>
-      <label for="bar5">Select the color for label5:</label>
-      <input type="color" id="label5" name="label5" value="#ff0000"><br>
-      <label for="bar6">Select the color for label6:</label>
-      <input type="color" id="label6" name="label6" value="#ff0000"><br>
+    <div id=barColorSetting>
+      <p>Graph bar color configuration: </p>
+      <input type="checkbox" id="barColorSync" name="barColorSync" value="barColorSync" checked>
+      <label for="barColorSync">synchronize all bar color?</label>
+
+      <label for="allBar">Select the color for bars:</label>
+      <input type="color" id="allBar" name="allBar" value="#ff0000">
     </div>
 
     <!--AXES SETTINGS-->
     <div>
       <span>
         <p>axes settings: </p>
-        <input type="checkbox" id="showx" name="showx" value="showx">
+        <input type="checkbox" id="showx" name="showx" value="showx" checked>
         <label for="showx">show x-axis labels?</label>
         <label for="xsize">label font size (between 1 and 500):</label>
         <input type="number" id="xsize" name="xsize" min="1" max="500">
         <label for="xcolor">Select x-axis label color</label>
         <input type="color" id="xcolor" name="xcolor" value="#ff0000">
+        <label for="xangle">x-label angle(between 0 and 360):</label>
+        <input type="number" id="xangle" name="xangle" min="0" max="360">
 
         <label for="xfont">Select font for x label: </label>
         <select name="xfont" id="xfont">
@@ -147,12 +143,16 @@
       </span>
 
       <span>
-        <input type="checkbox" id="showy" name="showy" value="showy">
+        <input type="checkbox" id="showy" name="showy" value="showy" checked>
         <label for="showy">show y-axis labels?</label>
         <label for="ysize">label font size (between 1 and 500):</label>
         <input type="number" id="ysize" name="ysize" min="1" max="500">
         <label for="ycolor">Select y-axis label color:</label>
         <input type="color" id="ycolor" name="ycolor" value="#ff0000">
+        <label for="yangle">y-label angle(between 0 and 360):</label>
+        <input type="number" id="yangle" name="yangle" min="0" max="360">
+        <label for="numTicks">number of ticks on y-axis (greater or equal to 0):</label>
+        <input type="number" id="numTicks" name="numTicks" min="0">
 
         <label for="yfont">Select font for y label: </label>
         <select name="yfont" id="yfont">
@@ -213,6 +213,8 @@
         <option value="centR">Center Right</option>
       </select>
     </div>
+
+    <button id='refreshGraph'>Update Graph</button>
 
     </div>
     <!-- div element below for displaying graph-->
