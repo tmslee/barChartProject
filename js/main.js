@@ -44,7 +44,7 @@ $(document).ready(()=>{
       - bar color select setting
       - font and font color select in title, axes, legend
     */
-  let data;
+  let data = [];
   let options = {
     type: 0,
 
@@ -103,15 +103,36 @@ $(document).ready(()=>{
   //TYPE STTINGS
   $('input[type=radio][name=type]').on('change', ()=>{
     let value = $('input[name=type]:checked').val();
+    let $slLabel, $slText, $slInst, $slButton;
     switch(value){
       case "nonstack":
         options.type = 0;
+        $('#dataInst').text("* Please eneter a series of numerical values separated by commas (,)");
+        $(".stackLabel").remove();
         break;
+
       case "uniStack":
         options.type = 1;
+        $('#dataInst').text("* Please enter a series of numerical values separated by commas (,), and each group of values separated by semicolon (;): i.e. 1,2,3;4,5,6;7,8 -> first bar will display (1,2,3), the second (4,5,6) and the third (7,8)");
+        if(!$(".stackLabel").length){
+          $slLabel = $('<label for="stackLabel" class="stackLabel">Enter stack labels: </label>');
+          $slText = $("<input>", {type:"text", id:"stackLabel", name:"stackLabel", class:"stackLabel"});
+          $slInst = $('<p class="stackLabel">* Please enter a series of stack labels separated by commas (,)</p>');
+          $slButton = $('<button id="enterStackLabel" class="stackLabel">submit stack labels</button>')
+          $('#labelInst').after($slLabel, $slText, $slButton, $slInst);
+        }
         break;
+
       case "arbStack":
         options.type = 2;
+        $('#dataInst').text("* Please enter a series of numerical values separated by commas (,), and each group of values separated by semicolon (;): i.e. 1,2,3;4,5,6;7,8 -> first bar will display (1,2,3), the second (4,5,6) and the third (7,8)");
+        if(!$(".stackLabel").length){
+          $slLabel = $('<label for="stackLabel" class="stackLabel">Enter stack labels: </label>');
+          $slText = $("<input>", {type:"text", id:"stackLabel", name:"stackLabel", class:"stackLabel"});
+          $slInst = $('<p class="stackLabel">* Please enter a series of stack labels separated by commas (,), and each group of values separated by semicolon (;)</p>');
+          $slButton = $('<button id="enterStackLabel" class="stackLabel">submit stack labels</button>')
+          $('#labelInst').after($slLabel, $slText, $slButton, $slInst);
+        }
         break;
     }
   });
@@ -192,10 +213,116 @@ $(document).ready(()=>{
       options.title.text = title;
     }
   });
+  $('#titleFont').on('change', ()=>{
+    options.title.font = $('#titleFont').children("options:selected").val();
+  });
+  $('#titlecolor').on('change', ()=>{
+    options.title.font = $('#titlecolor').val();
+  });
+  $('#titlesize').on('keyup mouseup', ()=>{
+    let num = $('#titlesize').val();
+    if(num>0 && num <=501) options.title.size = num;
+    else alert('Please enter a value between the min and the max font size');
+    console.log(options.title.size);
+  });
 
   //DATA SETTINGS
+  $('#enterData').on('click',()=>{
+    data = [];
+    let raw = $('#data').val();
+    if(options.type === 0){
+      let strData = raw.split(',');
+      let invalid = false;
+      for(let str of strData){
+        let num = Number(str);
+        if(isNaN(num)){
+          alert("Please enter a series of numerical data separated by commas");
+          invalid = true;
+          break;
+        }
+        else data.push(num);
+      }
+      if(invalid) data = [];
+    }
+    else{
+      let rows = raw.split(';');
+      let numCol = 0;
+      for(let row of rows){
+        let strData = row.split(',');
+
+        //check if number of stacks are consistent for every bar
+        if(numCol === 0) numCol = strData.length;
+        if(options.type === 1 && numCol !== 0 && strData.length !== numCol) alert("Plese make sure that your number of stacks are identical for every group of data you have entered");
+        //
+
+        else{
+          let invalid = false;
+          let rowNum = [];
+          for(let str of strData){
+            let num = Number(str);
+            if(isNaN(num)){
+              alert("Please make sure all your data is numerical, each groups of data is separated by semicolon, and each numerical values within those groups are separated by commas.");
+              invalid = true;
+              break;
+            }
+            else rowNum.push(num);
+          }
+          if(invalid){
+            data = [];
+            break;
+          }
+          else data.push(rowNum);
+        }
+      }
+    }
+  });
 
   //LABEL SETTINGS
+  $("#enterDataLabel").on('click', ()=>{
+    let raw = $('#dataLabel').val();
+    if(checkSpecialChar(raw)) alert("Please make sure your labels do not include any special characters: [ \\ ^ $ . | ? * + ( )");
+    else{
+      let dl = raw.split(',').map(elem => elem.trim());
+      if(dl.length === data.length) options.label.barLabel = dl;
+      else alert("Please make sure that you have entered the data first, and the number of your bar labels matches the number of bars provided in your data");
+    }
+  });
+
+  $(document).on('click',"#enterStackLabel", ()=>{
+    let raw = $('#stackLabel').val();
+    if(checkSpecialChar(raw)) alert("Please make sure that your labels do not include any special characters: [ \\ ^ $ . | ? * + ( )");
+    else{
+      if(options.type === 1){
+        let sl = raw.split(',').map(elem => elem.trim());
+        if(sl.length === data[0].length) options.label.stackLabel = sl;
+        else alert("Please make sure that you have entered the data first, and the number of our stack labels match the number of stacks per bar provided in your data");
+      }
+
+      else{
+        let invalid = false;
+        let sl = [];
+        let rows = raw.split(';');
+        if(rows.length !== data.length){
+          alert("Please make sure that you have entered the data first, and your stack labels are the same dimensions as your provided data");
+          invalid = true;
+        }
+        else{
+          for(let i=0 ; i<rows.length ; i++){
+            let row = rows[i].split(',').map(elem => elem.trim());
+            if(row.length !== data[i].length){
+              alert("Please make sure that you have entered the data first, and your stack labels are the same dimensions as your provided data");
+              invalid = true;
+              break;
+            }
+            else{
+              sl.push(row);
+            }
+          }
+        }
+        if(!invalid) options.label.stackLabel = sl;
+      }
+    }
+  });
 
   //SIZE SETTINGS
 

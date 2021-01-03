@@ -17,7 +17,7 @@
     <!--STACK GRAPH SETTINGS-->
     <div id>
       <p>Please enter the specifications for your bar graph: </p>
-      <input type="radio" id="nonstack" name="type" value ="nonstack">
+      <input type="radio" id="nonstack" name="type" value ="nonstack" checked>
       <label for="nonstack">graph without stacking</label>
       <input type="radio" id="uniStack" name="type" value ="uniStack">
       <label for="uniStack">graph with universal stacking for every bar</label>
@@ -78,20 +78,18 @@
     <div>
       <label for="data">Enter numerical data* :</label>
       <input type="text" id="data" name="data">
-      <p>* Please eneter a series of numerical values separated by commas (,)</p>
-      <p>* Please enter a series of numerical values separated by commas (,), and each group of values separated by semicolon (;):<br> i.e. 1,2,3;4,5,6;7,8 -> first bar will display (1,2,3), the second (4,5,6) and the third (7,8) </p>
+      <button id="enterData">enter data</button>
+      <p id="dataInst">* Please eneter a series of numerical values separated by commas (,)</p>
     </div>
 
 
     <!--ENTER LABEL-->
     <!-- labels will also depend on first selection: if we're doing stacks we need bar label and stack label-->
-    <div>
+    <div id='labelInput'>
       <label for="dataLabel">Enter data labels* :</label>
       <input type="text" id="dataLabel" name="dataLabel">
-      <label for="stackLabel">Enter stack labels* :</label>
-      <input type="text" id="stackLabel" name="stackLabel">
-      <p>* Please eneter a series of data labels separated by commas (,)</p>
-      <p>* Please enter a series of ndata labels separated by commas (,), and each group of values separated by semicolon (;)</p>
+      <button id="enterDataLabel">submit data labels</button>
+      <p id="labelInst">* Please eneter a series of data labels separated by commas (,)</p>
       <p>* warning: do not include sepecial characters in the labels: [ \ ^ $ . | ? * + ( )</p>
     </div>
 
