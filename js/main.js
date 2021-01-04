@@ -47,6 +47,7 @@ jQuery(function(){
   let data = [];
   let options = {
     type: 0,
+    spacing: 5,
 
     label:{
       barLabel:[],
@@ -54,8 +55,8 @@ jQuery(function(){
     },
 
     dim:{
-      width: 500,
-      height: 500
+      width: 400,
+      height: 400
     },
 
     font:{
@@ -74,7 +75,7 @@ jQuery(function(){
 
     title:{
       text:'Graph Title',
-      size:50,
+      size:30,
       font:'Arial',
       color:'#000000'
     },
@@ -89,7 +90,7 @@ jQuery(function(){
       yshow:true,
       ycolor:'#000000',
       yfont:'Arial',
-      ysize:10,
+      ysize:5,
       yangle: 0,
       numticks: 0
     },
@@ -97,17 +98,17 @@ jQuery(function(){
     legend:{
       loc: 'upL',
       show:true,
-      height:40,
-      width:40,
+      height:300,
+      width:300,
       font: 'Arial',
       color: '#000000'
     }
   };
 
-  //TYPE STTINGS
-  //TO DO: IF DATA AND LABELS ARE ALREADY PRESENT AND TYPE CHANGES, RESET DATA AND LABELS AND PROMPT USER TO RE-ENTER
-  //CLEAR BAR COLOR SETTINGS: REMOVE ALL .barColor elements, remove saved colors in object, and check colorsync off.
+// TODO: INCLUDE SPACING SETTINGS, REMOVE LABEL ANGLE, REMOVE LEGEND LOCATION
+// SHOW DEFAULT VALUES OF INPUTS IN FORM
 
+  //TYPE STTINGS
   $('input[type=radio][name=type]').on('change', ()=>{
     let value = $('input[name=type]:checked').val();
     let $slLabel, $slText, $slInst, $slButton;
@@ -126,7 +127,7 @@ jQuery(function(){
       $('#stackLabel').val('');
       $('.barColor').remove();
       $('#barColorSync').prop('checked', true);
-
+      $('.graph').remove();
       alert("You have changed the graph's style: please re-enter your data and labels");
     }
 
@@ -607,6 +608,226 @@ jQuery(function(){
 
   //DRAW GRAPH
   $(document).on('click', '#refreshGraph', function(){
+    $('.graph').remove();
+
+    let $canvas = $(`<canvas id='graph' class='graph' width=${options.dim.width} height=${options.dim.height} style="border:1px solid #000000"></canvas>`);
+    $('#refreshGraph').after($canvas);
+    let c = document.getElementById('graph');
+    let ctx = c.getContext('2d');
+
+    let minHeight = Number.MAX_VALUE;
+    let maxHeight = 0;
+    let minRes = Number.MAX_VALUE;
+    if(options.type === 0){
+      for(let i=0; i<data.length ; i++){
+        let currN = data[i];
+        if(currN >= maxHeight) maxHeight = currN;
+        if(currN <= minHeight) minHeight = currN;
+        for(let j=i+1; j<data.length ; j++){
+          let diff = Math.abs(currN-data[j]);
+          if(diff <= minRes) minRes = diff;
+        }
+      }
+      minRes = Math.min(minRes, minHeight);
+    }
+    else{
+      let sums = [];
+      for(let i=0; i<data.length; i++){
+        let dataRow = data[i];
+        let sum = 0;
+        for(let j=0; j<dataRow.length; j++){
+          minRes = Math.min(minRes, dataRow[j]);
+          sum+=dataRow[j];
+        }
+        maxHeight = Math.max(maxHeight, sum);
+        minHeight = Math.min(minHeight, sum);
+        sums.push(sum);
+      }
+
+      for(let i=0; i<sums.length; i++){
+        for(let j=i+1; j<sums.length; j++){
+          minRes = Math.min(minRes, Math.abs(sums[i]-sums[j]));
+        }
+      }
+
+      minRes = Math.min(minRes, minHeight);
+    }
+
+
+    //we can set minRes >= 1px approximately to visualize data accurately.
+    //recommended height of graph = (maxHeight/minRes) pixels or that multiplied by x until pixels is triple digit
+    //min height of graph = maxHeight/minRes OR maxHeight/minHeight
+    //recommended width of graph = numBars*xpixels
+    //min width = numBars
+    let w = options.dim.width;
+    let h = options.dim.height;
+    let wrange = .8*w;
+    let hrange = .65*h;
+    let numBars = data.length;
+    let barWidth = Math.floor((wrange - options.spacing)/numBars) - options.spacing;
+    let pixPerVal = Math.floor(hrange/maxHeight);
+
+    let originx = .1*w;
+    let originy = .85*h;
+
+    //DRAW BARS AND X TICKS & LABELS
+    if(options.type === 0){
+      for(let i=0 ; i<data.length ; i++){
+        let val = data[i];
+        let label = options.label.barLabel[i];
+        let color = options.bColor.allSync ? options.bColor.allColor : options.bColor.colors[label];
+        let xpos = originx + i*barWidth + (i+1)*options.spacing;
+        let ypos = originy - val*pixPerVal;
+
+        ctx.moveTo(xpos + Math.floor(barWidth/2), originy-0.01*h);
+        ctx.lineTo(xpos + Math.floor(barWidth/2), originy+0.01*h);
+        ctx.stroke();
+
+        if(options.axis.xshow){
+          ctx.font = `${options.axis.xsize}px ${options.axis.xfont}`
+          ctx.fillStyle = options.axis.xcolor;
+          ctx.textAlign = 'center';
+          ctx.fillText(label, xpos+Math.floor(barWidth/2), .925*h);
+
+        }
+
+        ctx.fillStyle = color;
+        ctx.fillRect(xpos, ypos, barWidth, val*pixPerVal);
+      }
+    }
+
+    else if(options.type === 1){
+      for(let i=0 ; i<data.length ; i++){
+        let currBar = data[i];
+        let bLabel = options.label.barLabel[i];
+
+        let xpos = originx + i*barWidth + (i+1)*options.spacing;
+        let ypos = originy;
+        for(let j=0; j<currBar.length ; j++){
+          let val = currBar[j];
+          let sLabel = options.label.stackLabel[j];
+          ypos -= val*pixPerVal;
+
+          let color;
+          if(options.bColor.allSync) color = options.bColor.allColor;
+          else if(options.bColor.stackSync) color = options.bColor.stackColors[sLabel];
+          else color = options.bColor.colors[`${bLabel}-${sLabel}`];
+
+          ctx.fillStyle = color;
+          ctx.fillRect(xpos, ypos, barWidth, val*pixPerVal);
+        }
+        ctx.moveTo(xpos + Math.floor(barWidth/2), originy-0.01*h);
+        ctx.lineTo(xpos + Math.floor(barWidth/2), originy+0.01*h);
+        ctx.stroke();
+
+        if(options.axis.xshow){
+          ctx.font = `${options.axis.xsize}px ${options.axis.xfont}`
+          ctx.fillStyle = options.axis.xcolor;
+          ctx.textAlign = 'center';
+          ctx.fillText(bLabel, xpos+Math.floor(barWidth/2), .925*h);
+        }
+      }
+    }
+
+    else{
+      for(let i=0 ; i<data.length; i++){
+        let currBar = data[i];
+        let xpos = originx + i*barWidth + (i+1)*options.spacing;
+        let ypos = originy;
+        for(let j=0 ; j<currBar.length ; j++){
+          let val = currBar[j];
+          let label = `${options.label.barLabel[i]}-${options.label.stackLabel[i][j]}`;
+          let color = options.bColor.allSync ? options.bColor.allColor : options.bColor.colors[label];
+          ypos -= val*pixPerVal;
+
+          ctx.fillStyle = color;
+          ctx.fillRect(xpos, ypos, barWidth, val*pixPerVal);
+        }
+        ctx.moveTo(xpos + Math.floor(barWidth/2), originy-0.01*h);
+        ctx.lineTo(xpos + Math.floor(barWidth/2), originy+0.01*h);
+        ctx.stroke();
+
+        if(options.axis.xshow){
+          ctx.font = `${options.axis.xsize}px ${options.axis.xfont}`
+          ctx.fillStyle = options.axis.xcolor;
+          ctx.textAlign = 'center';
+          ctx.fillText(options.label.barLabel[i], xpos+Math.floor(barWidth/2), .925*h);
+        }
+      }
+    }
+
+    //DRAW AXIS
+    ctx.moveTo(.1*w,.85*h);
+    ctx.lineTo(.9*w, .85*h);
+    ctx.stroke();
+
+    ctx.moveTo(.1*w,.85*h);
+    ctx.lineTo(.1*w, .2*h);
+    ctx.stroke();
+
+    //DRAW Y-TICKS AND INSERT Y LABELS
+    let valSpacing = maxHeight/(options.axis.numticks +1);
+    ctx.moveTo(originx-0.01*w, originy);
+    ctx.lineTo(originx+0.01*w, originy);
+    ctx.stroke();
+
+    ctx.moveTo(originx-0.01*w, .2*h);
+    ctx.lineTo(originx+0.01*w, .2*h);
+    ctx.stroke();
+
+    if(options.axis.yshow){
+      ctx.font = `${options.axis.ysize}px ${options.axis.yfont}`
+      ctx.fillStyle = options.axis.ycolor;
+      ctx.textAlign = 'center';
+
+      ctx.fillText('0', 0.05*w, .85*h + options.axis.ysize/2);
+      ctx.fillText(String(maxHeight), 0.05*w, .2*h+ options.axis.ysize/2);
+    }
+
+    for(let i=0 ; i<options.axis.numticks ; i++){
+      let ypos = originy - (i+1)*valSpacing*pixPerVal;
+      let val = String((i+1)*valSpacing);
+      ctx.moveTo(originx-0.01*w, ypos);
+      ctx.lineTo(originx+0.01*w, ypos);
+      ctx.stroke();
+
+      if(options.axis.yshow){
+        ctx.font = `${options.axis.ysize}px ${options.axis.yfont}`
+        ctx.fillStyle = options.axis.ycolor;
+        ctx.textAlign = 'center';
+
+        ctx.fillText(val, 0.05*w, ypos+ options.axis.ysize/2);
+      }
+    }
+
+    //INSERT TITLE
+    ctx.font = `bold ${options.title.size}px ${options.title.font}`
+    ctx.fillStyle = options.title.color;
+    ctx.textAlign = 'center';
+    ctx.fillText(options.title.text, w/2,.1*h, .75*w);
+
+
+    //make legend
+    let $legend = $(`<canvas id='legend' class='graph' width=${options.legend.width} height=${options.legend.height} style="border:1px solid #000000"></canvas>`);
+    $('#graph').after($legend);
+    c = document.getElementById('legend');
+    ctx = c.getContext('2d');
+
+
+
+
+
+    //origin: (.1w, .85h)
+    //x-axis: .1w -> .9w range: .8w
+    //y-axis: .85h -> .2h range: .75h
+
+    // ctx.fillStyle = "color"
+    // fillRect(x topleft, ytopleft, width height)
+
+    //ctx.font = "sizepx fontName";
+    //text: fillText(text, x, y, maxwidth)
+
+    //rotate: ctx.rotate(angle*Math.PI/180)
     console.log(options);
   });
 
