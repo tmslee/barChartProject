@@ -808,12 +808,27 @@ jQuery(function(){
 
 
     //make legend
-    let $legend = $(`<canvas id='legend' class='graph' width=${options.legend.width} height=${options.legend.height} style="border:1px solid #000000"></canvas>`);
-    $('#graph').after($legend);
-    c = document.getElementById('legend');
-    ctx = c.getContext('2d');
+    if(options.legend.show){
+      let $legend = $(`<canvas id='legend' class='graph' width=${options.legend.width} height=${options.legend.height} style="border:1px solid #000000"></canvas>`);
+      $('#graph').after($legend);
+      c = document.getElementById('legend');
+      ctx = c.getContext('2d');
 
+      if(options.bColor.allSync){
+        //dumb case
+      }
 
+      else if(options.type === 0){
+
+      }
+      else if(options.type === 1 && options.bColor.stackSync){
+
+      }
+      else{
+
+      }
+
+    }
 
 
 
